@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class InventarioService {
 
     private final InventarioRepository inventarioRepository;
-    private final ProductoRepository productoRepository; // Necesitamos el repositorio de productos
+    private final ProductoRepository productoRepository; 
 
     @Autowired
     public InventarioService(InventarioRepository inventarioRepository, ProductoRepository productoRepository) {
@@ -35,17 +35,15 @@ public class InventarioService {
      */
     @Transactional
     public InventarioResponse crearInventario(InventarioRequest request) {
-        // Buscar el producto por su ID
         Producto producto = productoRepository.findById(request.getProductoId())
                 .orElseThrow(() -> new RuntimeException("Producto no encontrado con ID: " + request.getProductoId()));
 
-        // Verificar si ya existe un registro de inventario para este producto
         if (inventarioRepository.findByProductoId(producto.getId()).isPresent()) {
             throw new RuntimeException("Ya existe un registro de inventario para el producto con ID: " + producto.getId());
         }
 
         Inventario inventario = Inventario.builder()
-                .producto(producto) // Asocia la entidad Producto
+                .producto(producto) 
                 .cantidadDisponible(request.getCantidadDisponible())
                 .cantidadReservada(request.getCantidadReservada())
                 .cantidadMinima(request.getCantidadMinima())
@@ -102,12 +100,10 @@ public class InventarioService {
     public Optional<InventarioResponse> actualizarInventario(Long id, InventarioRequest request) {
         return inventarioRepository.findById(id)
                 .map(inventarioExistente -> {
-                    // Si el productoId en el request es diferente, verificar y actualizar la relación
                     if (!inventarioExistente.getProducto().getId().equals(request.getProductoId())) {
                         Producto nuevoProducto = productoRepository.findById(request.getProductoId())
                                 .orElseThrow(() -> new RuntimeException("Nuevo producto no encontrado con ID: " + request.getProductoId()));
 
-                        // Asegurarse de que el nuevo producto no tenga ya un inventario
                         if (inventarioRepository.findByProductoId(nuevoProducto.getId()).isPresent() &&
                             !inventarioRepository.findByProductoId(nuevoProducto.getId()).get().getId().equals(id)) {
                             throw new RuntimeException("El nuevo producto con ID: " + nuevoProducto.getId() + " ya tiene un registro de inventario.");
@@ -139,9 +135,7 @@ public class InventarioService {
         return false;
     }
 
-    // --- Método de mapeo de Entidad a DTO de Respuesta ---
     private InventarioResponse mapToInventarioResponse(Inventario inventario) {
-        // Asegúrate de cargar el nombre y SKU del producto si quieres incluirlos en la respuesta
         String nombreProducto = (inventario.getProducto() != null) ? inventario.getProducto().getNombre() : null;
         String skuProducto = (inventario.getProducto() != null) ? inventario.getProducto().getSku() : null;
 

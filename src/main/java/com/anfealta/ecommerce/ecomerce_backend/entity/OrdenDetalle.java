@@ -9,6 +9,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data 
@@ -16,40 +17,37 @@ import java.time.LocalDateTime;
 @NoArgsConstructor 
 @AllArgsConstructor 
 @Entity 
-@Table(name = "inventarios") 
+@Table(name = "orden_detalles") 
 @EntityListeners(AuditingEntityListener.class) 
-public class Inventario {
+public class OrdenDetalle {
 
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY) 
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "producto_id", nullable = false, unique = true) 
+   
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "orden_id", nullable = false) 
+    private Orden orden;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "producto_id", nullable = false) 
     private Producto producto;
 
     @Column(nullable = false)
-    private Integer cantidadDisponible; 
+    private Integer cantidad; 
 
-    @Column(nullable = false)
-    private Integer cantidadReservada = 0; 
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal precioUnitario; 
 
-    @Column(nullable = false)
-    private Integer cantidadMinima; 
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal subtotalLinea; 
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
-    private LocalDateTime fechaCreacion;
+    private LocalDateTime fechaCreacion; 
 
     @LastModifiedDate
     @Column(nullable = false)
-    private LocalDateTime fechaActualizacion;
-
-    public Integer getCantidadTotal() {
-        return cantidadDisponible + cantidadReservada;
-    }
-
-    public boolean isBajoStock() {
-        return cantidadDisponible <= cantidadMinima;
-    }
+    private LocalDateTime fechaActualizacion; 
 }

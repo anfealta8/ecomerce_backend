@@ -37,5 +37,5 @@ public class ProductoRequest {
     private BigDecimal precio;
 
     @NotNull(message = "El estado activo del producto no puede ser nulo.")
-    private Boolean activo; // Campo 'activo' para reportes y filtros
+    private Boolean activo; 
 }
