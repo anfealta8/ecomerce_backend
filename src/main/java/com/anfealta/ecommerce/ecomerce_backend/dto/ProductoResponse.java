@@ -21,6 +21,6 @@ public class ProductoResponse {
     private String sku;
     private BigDecimal precio;
     private Boolean activo;
-    private LocalDateTime fechaCreacion; // Campo de auditoría
-    private LocalDateTime fechaActualizacion; // Campo de auditoría
+    private LocalDateTime fechaCreacion; 
+    private LocalDateTime fechaActualizacion; 
 }

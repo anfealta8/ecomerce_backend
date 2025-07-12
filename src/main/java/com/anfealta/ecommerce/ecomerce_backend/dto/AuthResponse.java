@@ -6,13 +6,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponse { 
+@Builder
+public class AuthResponse {
     private String token;
-    private Long idUsuario; 
-    private String nombreUsuario; 
-    private String email;
-    
+    private String message; 
+
+    public AuthResponse(String token) {
+        this.token = token;
+        this.message = "Autenticación exitosa";
+    }
 }

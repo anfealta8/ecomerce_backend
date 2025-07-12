@@ -9,10 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponse { 
-    private String token;
-    private Long idUsuario; 
-    private String nombreUsuario; 
-    private String email;
-    
+public class TopSoldProductResponse {
+    private Long productId;
+    private String productName;
+    private Long totalSold; 
 }

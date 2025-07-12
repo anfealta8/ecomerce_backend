@@ -6,20 +6,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.Set; 
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InventarioResponse {
-
+@Builder
+public class UsuarioResponse {
     private Long id;
-    private Long productoId; 
-    private String nombreProducto; 
-    private String skuProducto; 
-    private Integer cantidadDisponible;
-    private Integer cantidadReservada;
-    private Integer cantidadMinima;
+    private String username; 
+    private String email;
+    private Set<String> roles; 
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaActualizacion;
 }
