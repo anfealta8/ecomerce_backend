@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Set; 
 
 @Data
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
