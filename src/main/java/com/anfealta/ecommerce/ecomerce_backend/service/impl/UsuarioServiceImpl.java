@@ -54,10 +54,10 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     public UsuarioResponse crearUsuario(UsuarioRequest request) { 
         if (usuarioRepository.existsByNombreUsuario(request.getUsername())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "El nombre de usuario ya está en uso.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "El nombre de usuario '" + request.getUsername() + "' ya está en uso.");
         }
         if (usuarioRepository.existsByEmail(request.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "El email ya está registrado.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "El email '" + request.getEmail() + "' ya está registrado.");
         }
 
         Usuario nuevoUsuario = Usuario.builder()

@@ -1,4 +1,4 @@
-package com.anfealta.ecommerce.Ecomerce_Backend;
+package com.anfealta.ecommerce.ecomerce_backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
