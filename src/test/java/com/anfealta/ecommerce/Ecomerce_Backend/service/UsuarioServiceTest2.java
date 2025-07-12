@@ -67,7 +67,7 @@ class UsuarioServiceTest2 {
 
         usuarioNuevo = Usuario.builder()
                 .id(2L)
-                .nombreUsuario("anotheruser") // This is the conflicting username
+                .nombreUsuario("anotheruser") 
                 .email("another@example.com")
                 .contrasena("encodedNewPassword")
                 .roles(Collections.singleton(RolUsuario.USER))
@@ -79,32 +79,25 @@ class UsuarioServiceTest2 {
     @Test
     @DisplayName("Debe crear un usuario exitosamente cuando los datos son válidos y no hay conflictos")
     void crearUsuario_Success() {
-        // GIVEN
         when(usuarioRepository.existsByNombreUsuario(usuarioRequest.getUsername())).thenReturn(false);
         when(usuarioRepository.existsByEmail(usuarioRequest.getEmail())).thenReturn(false);
         when(passwordEncoder.encode(usuarioRequest.getPassword())).thenReturn("encodedPassword");
 
-        // Cuando se llama a save, devuelve una nueva instancia de Usuario que simula haber sido guardada
-        // y asegúrate de que tiene los roles correctamente inicializados.
         when(usuarioRepository.save(any(Usuario.class))).thenAnswer(invocation -> {
             Usuario savedUser = invocation.getArgument(0);
-            savedUser.setId(1L); // Simula el ID que la base de datos asignaría
-            savedUser.setContrasena("encodedPassword"); // Asegúrate que la contraseña está codificada
+            savedUser.setId(1L); 
+            savedUser.setContrasena("encodedPassword"); 
 
-            // Asegurarse de que los roles se inicializan si no lo están,
-            // o se establecen según la lógica de negocio (ej. rol por defecto USER)
             if (savedUser.getRoles() == null || savedUser.getRoles().isEmpty()) {
-                savedUser.setRoles(new HashSet<>(Collections.singletonList(RolUsuario.USER))); // Inicializar con un rol por defecto
+                savedUser.setRoles(new HashSet<>(Collections.singletonList(RolUsuario.USER))); 
             }
             savedUser.setFechaCreacion(LocalDateTime.now());
             savedUser.setFechaActualizacion(LocalDateTime.now());
             return savedUser;
         });
 
-        // WHEN
         UsuarioResponse response = usuarioService.crearUsuario(usuarioRequest);
 
-        // THEN
         assertNotNull(response);
         assertEquals(usuarioRequest.getUsername(), response.getUsername());
         assertEquals(usuarioRequest.getEmail(), response.getEmail());
@@ -196,23 +189,17 @@ class UsuarioServiceTest2 {
                 .password("newpassword123")
                 .build();
 
-        // Simular que el usuario existente es encontrado
         when(usuarioRepository.findById(userId)).thenReturn(Optional.of(usuarioExistente));
-        // Simular que el nuevo username y email no existen para otros usuarios
-        // Nota: Para este test, el username 'updateduser' no debe existir.
         when(usuarioRepository.existsByNombreUsuario(updateRequest.getUsername())).thenReturn(false);
         when(usuarioRepository.existsByEmail(updateRequest.getEmail())).thenReturn(false);
-        // Simular la codificación de la nueva contraseña
         when(passwordEncoder.encode(updateRequest.getPassword())).thenReturn("encodedNewPassword");
 
-        // Capturar el argumento pasado a save para verificar los detalles
         when(usuarioRepository.save(any(Usuario.class))).thenAnswer(invocation -> {
             Usuario usuarioActualizado = invocation.getArgument(0);
             assertEquals(userId, usuarioActualizado.getId());
             assertEquals(updateRequest.getUsername(), usuarioActualizado.getNombreUsuario());
             assertEquals(updateRequest.getEmail(), usuarioActualizado.getEmail());
             assertEquals("encodedNewPassword", usuarioActualizado.getContrasena());
-            // Se puede verificar que la fecha de actualización cambió
             assertNotNull(usuarioActualizado.getFechaActualizacion());
             return usuarioActualizado;
         });
@@ -257,14 +244,12 @@ class UsuarioServiceTest2 {
     void actualizarUsuario_UsernameConflict() {
         Long userId = 1L;
         UsuarioRequest updateRequest = UsuarioRequest.builder()
-                .username("anotheruser") // username que ya existe para usuarioNuevo (ID 2L)
+                .username("anotheruser") 
                 .email("updated@example.com")
                 .password("newpassword")
                 .build();
 
-        // Simular que el usuario existente es encontrado
         when(usuarioRepository.findById(userId)).thenReturn(Optional.of(usuarioExistente));
-        // Simular que el nuevo username ya existe Y pertenece a un ID diferente
         when(usuarioRepository.existsByNombreUsuario(updateRequest.getUsername())).thenReturn(true);
         
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
@@ -272,7 +257,6 @@ class UsuarioServiceTest2 {
         });
 
         assertEquals(HttpStatus.CONFLICT, exception.getStatusCode());
-        // MODIFICACIÓN: Usar assertEquals para una verificación más estricta del mensaje.
         assertEquals("El nombre de usuario 'anotheruser' ya está en uso.", exception.getReason());
 
         verify(usuarioRepository, times(1)).findById(userId);
@@ -293,7 +277,6 @@ class UsuarioServiceTest2 {
 
         assertNotNull(responses);
         assertEquals(2, responses.size());
-        // Verificar que el mapeo a DTO es correcto
         assertEquals(usuarioExistente.getNombreUsuario(), responses.get(0).getUsername());
         assertEquals(usuarioNuevo.getNombreUsuario(), responses.get(1).getUsername());
         verify(usuarioRepository, times(1)).findAll();
