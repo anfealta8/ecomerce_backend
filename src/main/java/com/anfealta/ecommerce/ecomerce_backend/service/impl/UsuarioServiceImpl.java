@@ -57,7 +57,7 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "El nombre de usuario '" + request.getUsername() + "' ya está en uso.");
         }
         if (usuarioRepository.existsByEmail(request.getEmail())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "El email '" + request.getEmail() + "' ya está registrado.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "El email '" + request.getEmail() + "' ya está en uso.");
         }
 
         Usuario nuevoUsuario = Usuario.builder()
@@ -75,10 +75,11 @@ public class UsuarioServiceImpl implements UsuarioService {
     public Optional<UsuarioResponse> actualizarUsuario(Long id, UsuarioRequest request) {
         return usuarioRepository.findById(id).map(usuario -> {
             if (!usuario.getNombreUsuario().equals(request.getUsername()) && usuarioRepository.existsByNombreUsuario(request.getUsername())) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "El nuevo nombre de usuario ya está en uso.");
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "El nombre de usuario '" + request.getUsername() + "' ya está en uso.");
             }
             if (!usuario.getEmail().equals(request.getEmail()) && usuarioRepository.existsByEmail(request.getEmail())) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "El nuevo email ya está registrado.");
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "El email '"+request.getEmail()+"' ya está en uso.");
+                
             }
             usuario.setNombreUsuario(request.getUsername());
             usuario.setEmail(request.getEmail());
