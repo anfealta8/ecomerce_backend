@@ -5,21 +5,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InventarioResponse {
+public class OrdenDetalleResponse {
 
     private Long id;
-    private Long productoId; 
+    private Long productoId;
     private String nombreProducto; 
     private String skuProducto; 
-    private Integer cantidadDisponible;
-    private Integer cantidadReservada;
-    private Integer cantidadMinima;
-    private LocalDateTime fechaCreacion;
-    private LocalDateTime fechaActualizacion;
+    private Integer cantidad;
+    private BigDecimal precioUnitario;
+    private BigDecimal subtotalLinea;
 }

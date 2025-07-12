@@ -15,7 +15,7 @@ public class InventarioRequest {
 
     @NotNull(message = "El ID del producto no puede ser nulo.")
     @Min(value = 1, message = "El ID del producto debe ser mayor o igual a 1.")
-    private Long productoId; // El ID del producto al que se asocia este inventario
+    private Long productoId; 
 
     @NotNull(message = "La cantidad disponible no puede ser nula.")
     @Min(value = 0, message = "La cantidad disponible no puede ser negativa.")
@@ -23,9 +23,9 @@ public class InventarioRequest {
 
     @NotNull(message = "La cantidad reservada no puede ser nula.")
     @Min(value = 0, message = "La cantidad reservada no puede ser negativa.")
-    private Integer cantidadReservada; // Cantidad de stock que ya está asignada a órdenes pendientes
+    private Integer cantidadReservada; 
 
     @NotNull(message = "La cantidad mínima no puede ser nula.")
     @Min(value = 0, message = "La cantidad mínima no puede ser negativa.")
-    private Integer cantidadMinima; // Umbral para alertas de bajo stock
+    private Integer cantidadMinima; 
 }

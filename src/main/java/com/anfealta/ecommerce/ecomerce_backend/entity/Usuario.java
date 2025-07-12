@@ -1,4 +1,4 @@
-package com.anfealta.ecommerce.ecomerce_backend.entity; // Ajusta el paquete si es necesario
+package com.anfealta.ecommerce.ecomerce_backend.entity; 
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,33 +8,34 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import org.springframework.security.core.GrantedAuthority; // Para roles de Spring Security
-import org.springframework.security.core.authority.SimpleGrantedAuthority; // Para roles
-import org.springframework.security.core.userdetails.UserDetails; // Interfaz clave para Spring Security
+import org.springframework.security.core.GrantedAuthority; 
+import org.springframework.security.core.authority.SimpleGrantedAuthority; 
+import org.springframework.security.core.userdetails.UserDetails; 
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set; // Para roles
+import java.util.Set; 
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "usuarios") // Nombre de la tabla en la base de datos
-@EntityListeners(AuditingEntityListener.class) // Habilita auditoría automática (si configuras @EnableJpaAuditing)
-public class Usuario implements UserDetails { // Implementa UserDetails para integrar con Spring Security
+@Table(name = "usuarios") 
+@EntityListeners(AuditingEntityListener.class) 
+public class Usuario implements UserDetails { 
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true, length = 50)
-    private String nombreUsuario; // Campo para el username
+    private String nombreUsuario; 
 
     @Column(nullable = false)
-    private String contrasena; // Contraseña encriptada
+    private String contrasena; 
 
     @Column(nullable = false, unique = true, length = 100)
     private String email;
@@ -44,19 +45,19 @@ public class Usuario implements UserDetails { // Implementa UserDetails para int
     private LocalDateTime fechaCreacion;
 
     @LastModifiedDate
-    @Column(nullable = false) // Fecha de la última modificación
+    @Column(nullable = false) 
     private LocalDateTime fechaActualizacion;
 
-    // Puedes manejar roles como una lista de strings o una entidad separada si son complejos
-    @ElementCollection(targetClass = RolUsuario.class, fetch = FetchType.EAGER) // Roles cargados de inmediato
+    @ElementCollection(targetClass = RolUsuario.class, fetch = FetchType.EAGER) 
     @CollectionTable(name = "usuario_roles", joinColumns = @JoinColumn(name = "usuario_id"))
-    @Enumerated(EnumType.STRING) // Almacena los roles como String en la DB
-    private Set<RolUsuario> roles; // Usamos Set para evitar roles duplicados
+    @Enumerated(EnumType.STRING) 
+    private Set<RolUsuario> roles; 
 
-    // --- Implementación de UserDetails para Spring Security ---
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Orden> ordenes = new ArrayList<>();
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Mapea tus roles a GrantedAuthority
         return roles.stream()
                 .map(rol -> new SimpleGrantedAuthority("ROLE_" + rol.name()))
                 .toList();
@@ -74,21 +75,21 @@ public class Usuario implements UserDetails { // Implementa UserDetails para int
 
     @Override
     public boolean isAccountNonExpired() {
-        return true; // Podrías implementar lógica de expiración de cuenta
+        return true; 
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true; // Podrías implementar lógica de bloqueo de cuenta
+        return true; 
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true; // Podrías implementar lógica de expiración de credenciales
+        return true; 
     }
 
     @Override
     public boolean isEnabled() {
-        return true; // Podrías implementar lógica para habilitar/deshabilitar usuarios
+        return true; 
     }
 }
