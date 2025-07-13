@@ -59,10 +59,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
-            // Configuración CORS directamente en Spring Security
-            .cors(cors -> cors.configurationSource(corsConfigurationSource())) // <-- AÑADE ESTA LÍNEA
+            .cors(cors -> cors.configurationSource(corsConfigurationSource())) 
             .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Sigue siendo importante para el pre-vuelo
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() 
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/productos").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/productos/{id}").hasRole("ADMIN")
@@ -89,8 +88,6 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/inventarios/{id}").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.DELETE, "/api/inventarios/{id}").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/productos/reportes/top5-vendidos").hasAnyRole("USER", "ADMIN")
-                
-                
 
                 .anyRequest().authenticated()
             )
