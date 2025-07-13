@@ -3,6 +3,7 @@ package com.anfealta.ecommerce.ecomerce_backend.controller;
 import com.anfealta.ecommerce.ecomerce_backend.dto.TopFrequentCustomerResponse;
 import com.anfealta.ecommerce.ecomerce_backend.dto.UsuarioRequest;
 import com.anfealta.ecommerce.ecomerce_backend.dto.UsuarioResponse;
+import com.anfealta.ecommerce.ecomerce_backend.dto.UsuarioUpdateRequest;
 import com.anfealta.ecommerce.ecomerce_backend.service.UsuarioService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController 
 @RequestMapping("/api/usuarios") 
@@ -73,15 +75,17 @@ public class UsuarioController {
      * @return ResponseEntity con el UsuarioResponse del usuario actualizado y status 200, o 404/409 si no.
      */
     @PutMapping("/{id}")
-    public ResponseEntity<UsuarioResponse> actualizarUsuario(@PathVariable Long id, @Valid @RequestBody UsuarioRequest request) {
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UsuarioResponse> actualizarUsuario(
+            @PathVariable Long id,
+            @Valid @RequestBody UsuarioUpdateRequest request) { 
         try {
-            return usuarioService.actualizarUsuario(id, request)
-                    .map(ResponseEntity::ok)
+            Optional<UsuarioResponse> usuarioActualizado = usuarioService.actualizarUsuario(id, request);
+            
+            return usuarioActualizado.map(ResponseEntity::ok)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado con ID: " + id));
-        } catch (ResponseStatusException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error al actualizar el usuario: " + e.getMessage());
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
