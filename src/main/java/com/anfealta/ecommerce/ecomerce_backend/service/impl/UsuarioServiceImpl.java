@@ -3,6 +3,7 @@ package com.anfealta.ecommerce.ecomerce_backend.service.impl;
 import com.anfealta.ecommerce.ecomerce_backend.dto.TopFrequentCustomerResponse; // Importa el nuevo DTO
 import com.anfealta.ecommerce.ecomerce_backend.dto.UsuarioRequest;
 import com.anfealta.ecommerce.ecomerce_backend.dto.UsuarioResponse;
+import com.anfealta.ecommerce.ecomerce_backend.dto.UsuarioUpdateRequest;
 import com.anfealta.ecommerce.ecomerce_backend.entity.RolUsuario;
 import com.anfealta.ecommerce.ecomerce_backend.entity.Usuario;
 import com.anfealta.ecommerce.ecomerce_backend.repository.UsuarioRepository;
@@ -21,8 +22,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime; // Importa LocalDateTime
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -72,7 +75,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     @Transactional
-    public Optional<UsuarioResponse> actualizarUsuario(Long id, UsuarioRequest request) {
+    public Optional<UsuarioResponse> actualizarUsuario(Long id, UsuarioUpdateRequest request) {
         return usuarioRepository.findById(id).map(usuario -> {
             if (!usuario.getNombreUsuario().equals(request.getUsername()) && usuarioRepository.existsByNombreUsuario(request.getUsername())) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "El nombre de usuario '" + request.getUsername() + "' ya está en uso.");
@@ -83,6 +86,20 @@ public class UsuarioServiceImpl implements UsuarioService {
             }
             usuario.setNombreUsuario(request.getUsername());
             usuario.setEmail(request.getEmail());
+            if (request.getRoles() != null && !request.getRoles().isEmpty()) { // Asegúrate de que no sea nulo y no esté vacío
+                Set<RolUsuario> newRoles = new HashSet<>();
+                for (String roleName : request.getRoles()) {
+                    try {
+                        newRoles.add(RolUsuario.valueOf(roleName)); // Convierte la cadena a enum
+                    } catch (IllegalArgumentException e) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Rol inválido proporcionado: " + roleName);
+                    }
+                }
+                usuario.setRoles(newRoles); // Asigna el Set<RolUsuario> a tu entidad Usuario
+            } else if (request.getRoles() != null && request.getRoles().isEmpty()) {
+                // Si se envía un array de roles vacío, puedes optar por limpiar los roles del usuario
+                usuario.setRoles(new HashSet<>());
+            }
             if (request.getPassword() != null && !request.getPassword().isEmpty()) {
                 usuario.setContrasena(passwordEncoder.encode(request.getPassword()));
             }

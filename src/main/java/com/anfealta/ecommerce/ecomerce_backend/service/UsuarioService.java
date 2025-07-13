@@ -3,6 +3,8 @@ package com.anfealta.ecommerce.ecomerce_backend.service;
 import com.anfealta.ecommerce.ecomerce_backend.dto.TopFrequentCustomerResponse;
 import com.anfealta.ecommerce.ecomerce_backend.dto.UsuarioRequest;
 import com.anfealta.ecommerce.ecomerce_backend.dto.UsuarioResponse;
+import com.anfealta.ecommerce.ecomerce_backend.dto.UsuarioUpdateRequest;
+
 import org.springframework.security.core.userdetails.UserDetailsService; 
 
 import java.util.List;
@@ -12,7 +14,7 @@ public interface UsuarioService extends UserDetailsService {
     UsuarioResponse crearUsuario(UsuarioRequest request);
     Optional<UsuarioResponse> obtenerUsuarioPorId(Long id);
     List<UsuarioResponse> obtenerTodosLosUsuarios();
-    Optional<UsuarioResponse> actualizarUsuario(Long id, UsuarioRequest request);
+    Optional<UsuarioResponse> actualizarUsuario(Long id, UsuarioUpdateRequest request);
     boolean eliminarUsuario(Long id);
 
     List<TopFrequentCustomerResponse> obtenerTop5ClientesFrecuentes();
